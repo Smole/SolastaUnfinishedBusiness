@@ -90,6 +90,7 @@ internal static class SrdAndHouseRulesContext
         ConditionDefinitions.ConditionConjuredItemLink.silentWhenRemoved = true;
         ConditionDefinitions.ConditionConjuredItemLink.GuiPresentation.hidden = true;
 
+        AllowOnFireToEmitLight();
         AllowTargetingSelectionWhenCastingChainLightningSpell();
         ApplyConditionBlindedShouldNotAllowOpportunityAttack();
         ApplySrdWeightToFoodRations();
@@ -127,6 +128,20 @@ internal static class SrdAndHouseRulesContext
         AddCustomWeaponValidatorToFightingStyleArchery();
     }
 
+    private static void AllowOnFireToEmitLight()
+    {
+        if (!Main.Settings.AllowOnFireToEmitLight)
+        {
+            return;
+        }
+
+        foreach (var conditionDefinition in DatabaseRepository.GetDatabase<ConditionDefinition>()
+                     .Where(x => x == ConditionOnFire || x.parentCondition == ConditionOnFire))
+        {
+            conditionDefinition.RecurrentEffectForms.Add(FaerieFire.EffectDescription.EffectForms[1]);
+        }
+    }
+    
     internal static void SwitchUniversalSylvanArmorAndLightbringer()
     {
         GreenmageArmor.RequiredAttunementClasses.Clear();
